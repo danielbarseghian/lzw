@@ -14,9 +14,7 @@ int main(int argc, char *argv[])
 
   initialize_list(dictionnary);
 
-  FILE *fptr;
-
-  fptr = fopen(argv[1], "rb");
+  FILE *fptr = fopen(argv[1], "rb");
   if (fptr == NULL)
   {
     printf("Coudnt open %s, please make sure that the name is correct\n", argv[1]);
@@ -26,6 +24,13 @@ int main(int argc, char *argv[])
   for (int i = 0; i < INIT_SIZE; i++)
   {
     printf("%s is %i\n", dictionnary[i].sequence, dictionnary[i].code);
+  }
+
+  const int MAXLEN = 1024;
+  char buff[MAXLEN];
+  while(fgets(buff, MAXLEN, fptr) != NULL)
+  {
+    printf("%s", buff);
   }
 }
 
