@@ -9,6 +9,8 @@ typedef struct {
 #define MAX_SIZE 4096
 #define INIT_SIZE 256
 
-DictEntry dictionnary[MAX_SIZE];
+extern DictEntry dictionnary[MAX_SIZE];
+
+void initialize_list(DictEntry dict[]);
 
 #endif
