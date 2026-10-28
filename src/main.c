@@ -1,8 +1,11 @@
 #include "main.h"
 #include "stdio.h"
 #include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
 
 DictEntry dictionnary[MAX_SIZE];
+int dictLen = 256;
 
 int main(int argc, char *argv[])
 {
@@ -12,7 +15,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  initialize_list(dictionnary);
+  initializeList(dictionnary);
 
   FILE *fptr = fopen(argv[1], "rb");
   if (fptr == NULL)
@@ -21,20 +24,36 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  for (int i = 0; i < INIT_SIZE; i++)
-  {
-    printf("%s is %i\n", dictionnary[i].sequence, dictionnary[i].code);
-  }
-
   const int MAXLEN = 1024;
   char buff[MAXLEN];
+
   while(fgets(buff, MAXLEN, fptr) != NULL)
   {
-    printf("%s", buff);
+    // for every character
+    for (int i = 0, len = strlen(buff); i < len; i++)
+    {
+      printf("%c", buff[i]);
+      // check if it is in the list
+      char *test = malloc(1);
+
+      test[0] = buff[i];
+      printf("%d", isInList(dictionnary, test));
+    }
   }
 }
 
-void initialize_list(DictEntry dict[])
+bool isInList(DictEntry *dict, char *entry)
+{
+  for (int i = 0; i < dictLen; i++)
+  {
+    if (strcmp(entry, dict[i].sequence) == 0) 
+      return true;
+  }
+
+  return false;
+}
+
+void initializeList(DictEntry dict[])
 {
   // store each 256 values of one byte in the dictionnary
   for (int i = 0; i < INIT_SIZE; i++)
