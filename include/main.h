@@ -1,5 +1,4 @@
 #include <stdbool.h>
-#include <stdio.h>
 #ifndef MAIN_H
 #define MAIN_H
 
@@ -12,6 +11,6 @@ typedef struct {
 #define INIT_SIZE 256
 
 void initializeList(DictEntry dict[]);
-bool buildCode(DictEntry *dict, char *entry, char *final, FILE *fptr);
+bool buildCode(DictEntry *dict, char *final, char *buff, int sbuff, int ebuff);
 
 #endif

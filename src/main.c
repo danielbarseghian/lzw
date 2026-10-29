@@ -1,8 +1,9 @@
 #include "main.h"
 #include "stdio.h"
-#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 DictEntry dictionnary[MAX_SIZE];
 int dictLen = 256;
@@ -36,13 +37,27 @@ int main(int argc, char *argv[])
 
 }
 
-bool buildCode(DictEntry *dict, char *entry, char *final)
+bool buildCode(DictEntry *dict, char *final, char *buff, int sbuff, int ebuff)
 {
+  // make the string
+  int SIZE = ebuff - sbuff;
+  
+  // its one character
+  if (SIZE == 0)
+    SIZE = 1;
+  
+  char *str = malloc(sizeof(char) * SIZE + 1);
+  
+  for (int i = 0; i < SIZE; i++)  
+    str[i] = buff[sbuff + 1];
+
+  str[SIZE + 1] = '\0';
+ 
   for (int i = 0; i < dictLen; i++)
   {
-    if (strcmp(entry, dict[i]) == 0)
+    if (strcmp(str, dict[i]) == 0)
     {
-
+      buildCode(dict, entry buff + 1, final);
     }
   }
 }
