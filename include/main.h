@@ -1,6 +1,7 @@
+#include <stdbool.h>
+#include <stdio.h>
 #ifndef MAIN_H
 #define MAIN_H
-#include <stdbool.h>
 
 typedef struct {
   char *sequence;
@@ -11,6 +12,6 @@ typedef struct {
 #define INIT_SIZE 256
 
 void initializeList(DictEntry dict[]);
-bool isInList(DictEntry *dict, char *entry);
+bool buildCode(DictEntry *dict, char *entry, char *final, FILE *fptr);
 
 #endif

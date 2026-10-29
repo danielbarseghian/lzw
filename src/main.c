@@ -24,33 +24,27 @@ int main(int argc, char *argv[])
     return 1;
   }
 
+  char *entry = NULL, *final = NULL;
+
   const int MAXLEN = 1024;
   char buff[MAXLEN];
 
   while(fgets(buff, MAXLEN, fptr) != NULL)
   {
-    // for every character
-    for (int i = 0, len = strlen(buff); i < len; i++)
-    {
-      printf("%c", buff[i]);
-      // check if it is in the list
-      char *test = malloc(1);
-
-      test[0] = buff[i];
-      printf("%d", isInList(dictionnary, test));
-    }
+    // buff + 1 everytime there is something new  
   }
+
 }
 
-bool isInList(DictEntry *dict, char *entry)
+bool buildCode(DictEntry *dict, char *entry, char *final)
 {
   for (int i = 0; i < dictLen; i++)
   {
-    if (strcmp(entry, dict[i].sequence) == 0) 
-      return true;
-  }
+    if (strcmp(entry, dict[i]) == 0)
+    {
 
-  return false;
+    }
+  }
 }
 
 void initializeList(DictEntry dict[])
