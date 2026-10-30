@@ -34,7 +34,10 @@ int main(int argc, char *argv[])
   {
     // buff + 1 everytime there is something new
     buildCode(dictionnary, buff, sbuff, ebuff);
+    printf("returned\n");
   }
+
+  printf("goodbye\n");
 
 }
 
@@ -50,38 +53,41 @@ int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff)
     SIZE = 1;
  
   // This is for example "ABC"
-  char *str = malloc(sizeof(char) * SIZE + 1);
+  char *str = malloc(sizeof(char) * SIZE + 2);
   
   for (int i = 0; i < SIZE; i++)  
-    str[i] = buff[sbuff + 1];
+    str[i] = buff[sbuff + i];
 
   str[SIZE + 1] = '\0';
+
+  printf("%s\n", str);
+
+  bool found = false;
 
   for (int i = 0; i < dictLen; i++)
   {
     if (strcmp(str, dict[i].sequence) == 0)
     {
-      printf("if\n");
+      printf("recall\n");
       ebuff++;
       buildCode(dict, buff, sbuff, ebuff);
-    }
-    else 
-    {
-      printf("else on %s\n", str);
-      // We need to create a code
-      dictLen++;
-      printf("cpy\n");
-      dict[dictLen].sequence = malloc(strlen(str));
-      strcpy(dict[dictLen].sequence, str);
-      printf("free %s\n", dict[dictLen].sequence);
-      free(str);
-      printf("dict = \n");
-      dict[dictLen].code = dictLen;
-      printf("finish\n");
+
+      found = true;
     }
   }
 
-  printf("end\n");
+  if (!found) 
+  {
+    printf("creating new for %s with code %i\n", str, dictLen + 1);
+    // We need to create a code
+    dictLen++;
+    dict[dictLen].sequence = malloc(strlen(str));
+    strcpy(dict[dictLen].sequence, str);
+    free(str);
+    dict[dictLen].code = dictLen;
+  }
+
+  printf("return, %i\n", ebuff);
 
   return ebuff;
 }
