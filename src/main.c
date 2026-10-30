@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 DictEntry dictionnary[MAX_SIZE];
-int dictLen = 256;
+int dictLen = 255;
 
 int main(int argc, char *argv[])
 {
@@ -42,23 +42,24 @@ int main(int argc, char *argv[])
 }
 
 // return ebuff value so we can track where it is ending
-int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff) 
+void buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff) 
 {
   printf("BuildCode\n");
+
   // make the string
-  int SIZE = ebuff - sbuff;
+  int SIZE = ebuff - sbuff + 1;
   
   // its one character
   if (SIZE == 0)
     SIZE = 1;
  
   // This is for example "ABC"
-  char *str = malloc(sizeof(char) * SIZE + 2);
+  char *str = malloc(sizeof(char) * SIZE + 1);
   
   for (int i = 0; i < SIZE; i++)  
     str[i] = buff[sbuff + i];
 
-  str[SIZE + 1] = '\0';
+  str[SIZE] = '\0';
 
   printf("%s\n", str);
 
@@ -66,6 +67,12 @@ int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff)
 
   for (int i = 0; i < dictLen; i++)
   {
+    if (dict[i].sequence == NULL)
+    {
+      printf("dict number %i is null", i);
+      return;
+    }
+
     if (strcmp(str, dict[i].sequence) == 0)
     {
       printf("recall\n");
@@ -81,15 +88,15 @@ int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff)
     printf("creating new for %s with code %i\n", str, dictLen + 1);
     // We need to create a code
     dictLen++;
-    dict[dictLen].sequence = malloc(strlen(str));
+    dict[dictLen].sequence = malloc(strlen(str) + 1);
+
     strcpy(dict[dictLen].sequence, str);
-    free(str);
     dict[dictLen].code = dictLen;
   }
 
-  printf("return, %i\n", ebuff);
+  free(str);
+  printf("BYE BYE\n");
 
-  return ebuff;
 }
 
 void initializeList(DictEntry dict[])
