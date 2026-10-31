@@ -32,11 +32,16 @@ int main(int argc, char *argv[])
 
   while(fgets(buff, MAXLEN, fptr) != NULL)
   {
-    printf("rebuild\n");
-    // buff + 1 everytime there is something new
-    sbuff = buildCode(dictionnary, buff, sbuff, ebuff);
-    ebuff = sbuff;
-    printf("now on %i\n", buff[ebuff]);
+    printf("buff: %s\n", buff);
+    int buffSize = strlen(buff);
+
+    // While buff didnt reach buffSize
+    while (ebuff != buffSize)
+    {
+     // buff + 1 everytime there is something new
+     sbuff = buildCode(dictionnary, buff, sbuff, ebuff);
+     ebuff = sbuff;
+    }
   }
   printf("return\n");
 }
