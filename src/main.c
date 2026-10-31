@@ -32,20 +32,18 @@ int main(int argc, char *argv[])
 
   while(fgets(buff, MAXLEN, fptr) != NULL)
   {
+    printf("rebuild\n");
     // buff + 1 everytime there is something new
-    buildCode(dictionnary, buff, sbuff, ebuff);
-    printf("returned\n");
+    sbuff = buildCode(dictionnary, buff, sbuff, ebuff);
+    ebuff = sbuff;
+    printf("now on %i\n", buff[ebuff]);
   }
-
-  printf("goodbye\n");
-
+  printf("return\n");
 }
 
 // return ebuff value so we can track where it is ending
-void buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff) 
+int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff) 
 {
-  printf("BuildCode\n");
-
   // make the string
   int SIZE = ebuff - sbuff + 1;
   
@@ -67,19 +65,12 @@ void buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff)
 
   for (int i = 0; i < dictLen; i++)
   {
-    if (dict[i].sequence == NULL)
-    {
-      printf("dict number %i is null", i);
-      return;
-    }
-
     if (strcmp(str, dict[i].sequence) == 0)
     {
-      printf("recall\n");
-      ebuff++;
-      buildCode(dict, buff, sbuff, ebuff);
-
       found = true;
+      ebuff++;
+
+      buildCode(dict, buff, sbuff, ebuff);
     }
   }
 
@@ -95,8 +86,8 @@ void buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff)
   }
 
   free(str);
-  printf("BYE BYE\n");
 
+  return ebuff;
 }
 
 void initializeList(DictEntry dict[])

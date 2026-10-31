@@ -11,5 +11,6 @@ typedef struct {
 #define INIT_SIZE 256
 
 void initializeList(DictEntry dict[]);
-void buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff); 
+int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff);
+
 #endif
