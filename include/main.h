@@ -11,7 +11,7 @@ typedef struct {
 #define INIT_SIZE 256
 
 void initializeList();
-int buildCodes(char *buff, int sbuff, int ebuff, char **currCode);
+int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode);
 int allocFinal(char **final, int size);
 
 #endif

@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  int sbuff = 0, ebuff = 0;
+  int sbuff = 0, ebuff = 1;
 
   const int MAXLEN = 1024;
   char buff[MAXLEN];
@@ -39,31 +39,34 @@ int main(int argc, char *argv[])
     // While buff didnt reach buffSize
     while (ebuff != buffSize)
     {
-     // buff + 1 everytime there is something new
-     sbuff = buildCodes(buff, sbuff, ebuff, &currCode);
-     ebuff = sbuff;
+      // buff + 1 everytime there is something new
+      buildCodes(buff, sbuff, &ebuff, &currCode);
+     
+      sbuff = ebuff;
+      ebuff = sbuff + 1;
+
+      printf("now on %i\n", sbuff);
     }
   }
   printf("return\n");
 }
 
 // will return 1 or 0 depending on succed or not
-int buildCodes(char *buff, int sbuff, int ebuff, char **currCode)
+int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode)
 {
    // calculate the size of the buff 
-  int size = ebuff - sbuff;
-
-  // its only one character
-  if (size == 0)
-    size = 1;
+  int size = *ebuff - sbuff;
 
   // allocate the memory
   char *s = malloc(sizeof(char) * size + 1);
 
   // put the value between sbuff and ebuff in s 
-  for (int i = sbuff, j = 0; i < ebuff; i++, i++) 
+  for (int i = sbuff, j = 0; i < *ebuff; i++, j++)
     s[j] = buff[i];
 
+  s[size] = '\0';
+
+  printf("%s\n", s);
   bool found = false;
 
   // find the code
@@ -74,26 +77,26 @@ int buildCodes(char *buff, int sbuff, int ebuff, char **currCode)
       found = true;
 
       // get the number of digits in the code
-      int n = snprintf(NULL, 0, "%d", dictionnary[dictLen].code);
+      int n = snprintf(NULL, 0, "%d", dictionnary[i].code);
 
       // malloc the number of digits + 1 (for \0)
       *currCode = malloc(sizeof(char) * n + 1);
 
       // copy the code
-      snprintf(*currCode,n , "%d", dictionnary[i].code);
+      snprintf(*currCode, n + 1 , "%d", dictionnary[i].code);
 
-      // add the \0
-      *currCode[n + 1] = '\0';
-
+      (*ebuff)++;
       // try to find a new one
-      buildCodes(buff, sbuff, ebuff + 1, currCode);
+      int result = buildCodes(buff, sbuff, ebuff, currCode);
+
+      if (result == 1)
+        return 1;
     }
   }
 
   if (!found)
   {
     // use currCode
-    printf("code: %s\n", *currCode);
     return 0;
   }
 
