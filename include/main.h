@@ -12,6 +12,6 @@ typedef struct {
 
 void initializeList(DictEntry dict[]);
 int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff, int buffSize, char **final);
-void allocFinal(char *final, int s);
+int allocFinal(char **final, int size);
 
 #endif

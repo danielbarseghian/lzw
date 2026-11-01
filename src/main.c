@@ -79,7 +79,7 @@ int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff, int buffSize, c
         int n = snprintf(NULL, 0, "%d", dict[i].code); // number of digits in the code
 
         // use the current code and malloc or realloc size for final
-        allocFinal(*final, n + 1);
+        allocFinal(final, n + 1);
 
         snprintf(*final + oldSize,n + 1, "%d", dict[i].code);
         printf("%s\n", *final);
@@ -102,32 +102,45 @@ int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff, int buffSize, c
     strcpy(dict[dictLen].sequence, str);
     dict[dictLen].code = dictLen;
 
+    int oldSize = 1;
+
     // malloc for final
-    int oldSize = strlen(*final);
+    if (final != NULL && *final != NULL)
+      oldSize = strlen(*final);
+
+    printf("size %i\n", oldSize);
+
     int n = snprintf(NULL, 0, "%d", dict[dictLen].code); // number of digits in the code
 
+    // for the \0
+    n++;
+    printf(" n%i\n", n);
+
+    printf("so its %i\n", oldSize + n);
     // use the current code and malloc or realloc size for final
-    printf("alloc\n");
-    allocFinal(*final, n + 1);
-        
-    snprintf(*final + oldSize,n + 1, "%d", dict[dictLen].code);
-    printf("%s\n", *final);
- 
+    allocFinal(&(*final), oldSize + n);
+     
+    printf("code: %i\n", dict[dictLen].code);
+    snprintf(*final + oldSize, n, "%d", dict[dictLen].code);
+    printf("finished\n");
+    printf("string %s\n", *final);
   }
 
   free(str);
 
+  printf("out\n");
+
   return ebuff;
 }
 
-void allocFinal(char *final, int n)
+int allocFinal(char **final, int size)
 {
-  if (final == NULL)
-    final = malloc(sizeof(char) * n + 1);
-  else // realloc
-  {
-    final = realloc(final, n);
-  }
+  char *tmp = realloc(*final, size);
+  if (tmp == NULL) 
+    return 0;
+
+  *final = tmp;
+  return 1;
 }
 
 void initializeList(DictEntry dict[])
