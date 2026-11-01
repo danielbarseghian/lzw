@@ -47,92 +47,6 @@ int main(int argc, char *argv[])
   printf("return\n");
 }
 
-// return ebuff value so we can track where it is ending
-int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff, int buffSize, char **final) 
-{
-  // make the string
-  int SIZE = ebuff - sbuff + 1;
-  
-  // its one character
-  if (SIZE == 0)
-    SIZE = 1;
- 
-  // This is for example "ABC"
-  char *str = malloc(sizeof(char) * SIZE + 1);
-  
-  for (int i = 0; i < SIZE; i++)  
-    str[i] = buff[sbuff + i];
-
-  str[SIZE] = '\0';
-
-  printf("%s\n", str);
-
-  bool found = false;
-
-  for (int i = 0; i < dictLen; i++)
-  {
-    if (strcmp(str, dict[i].sequence) == 0)
-    {
-      if (ebuff == buffSize)
-      {
-        int oldSize = strlen(*final);
-        int n = snprintf(NULL, 0, "%d", dict[i].code); // number of digits in the code
-
-        // use the current code and malloc or realloc size for final
-        allocFinal(final, n + 1);
-
-        snprintf(*final + oldSize,n + 1, "%d", dict[i].code);
-        printf("%s\n", *final);
-      }
-
-      found = true;
-      ebuff++;
-
-      buildCode(dict, buff, sbuff, ebuff, buffSize, final);
-    }
-  }
-
-  if (!found) 
-  {
-    printf("creating new for %s with code %i\n", str, dictLen + 1);
-    // We need to create a code
-    dictLen++;
-    dict[dictLen].sequence = malloc(strlen(str) + 1);
-
-    strcpy(dict[dictLen].sequence, str);
-    dict[dictLen].code = dictLen;
-
-    int oldSize = 1;
-
-    // malloc for final
-    if (final != NULL && *final != NULL)
-      oldSize = strlen(*final);
-
-    printf("size %i\n", oldSize);
-
-    int n = snprintf(NULL, 0, "%d", dict[dictLen].code); // number of digits in the code
-
-    // for the \0
-    n++;
-    printf(" n%i\n", n);
-
-    printf("so its %i\n", oldSize + n);
-    // use the current code and malloc or realloc size for final
-    allocFinal(&(*final), oldSize + n);
-     
-    printf("code: %i\n", dict[dictLen].code);
-    snprintf(*final + oldSize, n, "%d", dict[dictLen].code);
-    printf("finished\n");
-    printf("string %s\n", *final);
-  }
-
-  free(str);
-
-  printf("out\n");
-
-  return ebuff;
-}
-
 // will return 1 or 0 depending on succed or not
 int buildCodes(char *buff, int sbuff, int ebuff, char **currCode)
 {
@@ -160,19 +74,19 @@ int buildCodes(char *buff, int sbuff, int ebuff, char **currCode)
       found = true;
 
       // get the number of digits in the code
-      int n = snprintf(NULL, 0, "%d", dict[dictLen].code);
+      int n = snprintf(NULL, 0, "%d", dictionnary[dictLen].code);
 
       // malloc the number of digits + 1 (for \0)
       *currCode = malloc(sizeof(char) * n + 1);
 
       // copy the code
-      snprintf(*currCode,n , "%d", dict[i].code);
+      snprintf(*currCode,n , "%d", dictionnary[i].code);
 
       // add the \0
       *currCode[n + 1] = '\0';
 
       // try to find a new one
-      buildCodes(buff, sbuff, ebuff + 1, &final, &currCode);
+      buildCodes(buff, sbuff, ebuff + 1, currCode);
     }
   }
 
