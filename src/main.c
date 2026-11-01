@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  initializeList(dictionnary);
+  initializeList();
 
   FILE *fptr = fopen(argv[1], "rb");
   if (fptr == NULL)
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
   const int MAXLEN = 1024;
   char buff[MAXLEN];
-  char *final = NULL;
+  char *currCode = NULL;
 
   while(fgets(buff, MAXLEN, fptr) != NULL)
   {
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     while (ebuff != buffSize)
     {
      // buff + 1 everytime there is something new
-     sbuff = buildCode(dictionnary, buff, sbuff, ebuff, buffSize, &final);
+     sbuff = buildCodes(buff, sbuff, ebuff, &currCode);
      ebuff = sbuff;
     }
   }
@@ -133,12 +133,13 @@ int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff, int buffSize, c
   return ebuff;
 }
 
-// will return 1 or 0 depending on success or not
-int buildCodes(char *buff, int sbuff, ebuff, char **final)
+// will return 1 or 0 depending on succed or not
+int buildCodes(char *buff, int sbuff, int ebuff, char **currCode)
 {
    // calculate the size of the buff 
   int size = ebuff - sbuff;
 
+  // its only one character
   if (size == 0)
     size = 1;
 
@@ -149,10 +150,37 @@ int buildCodes(char *buff, int sbuff, ebuff, char **final)
   for (int i = sbuff, j = 0; i < ebuff; i++, i++) 
     s[j] = buff[i];
 
+  bool found = false;
+
   // find the code
   for (int i = 0; i < dictLen; i++)
   {
-    
+    if (strcmp(s, dictionnary[i].sequence) == 0)
+    {
+      found = true;
+
+      // get the number of digits in the code
+      int n = snprintf(NULL, 0, "%d", dict[dictLen].code);
+
+      // malloc the number of digits + 1 (for \0)
+      *currCode = malloc(sizeof(char) * n + 1);
+
+      // copy the code
+      snprintf(*currCode,n , "%d", dict[i].code);
+
+      // add the \0
+      *currCode[n + 1] = '\0';
+
+      // try to find a new one
+      buildCodes(buff, sbuff, ebuff + 1, &final, &currCode);
+    }
+  }
+
+  if (!found)
+  {
+    // use currCode
+    printf("code: %s\n", *currCode);
+    return 0;
   }
 
   return 1;
@@ -166,22 +194,23 @@ int allocFinal(char **final, int size)
 
   *final = tmp;
   return 1;
+}
 
-void initializeList(DictEntry dict[])
+void initializeList()
 {
   // store each 256 values of one byte in the dictionnary
   for (int i = 0; i < INIT_SIZE; i++)
   {
-    dict[i].sequence = malloc(sizeof dict[i].sequence + 1);
-    if (dict[i].sequence == NULL)
+    dictionnary[i].sequence = malloc(sizeof dictionnary[i].sequence + 1);
+    if (dictionnary[i].sequence == NULL)
     {
       printf("malloc failed\n");
       return;
     }
 
-    dict[i].sequence[0] = (char) i;
-    dict[i].sequence[1] = '\0';
-    dict[i].code = i;
+    dictionnary[i].sequence[0] = (char) i;
+    dictionnary[i].sequence[1] = '\0';
+    dictionnary[i].code = i;
   }
 }
 
