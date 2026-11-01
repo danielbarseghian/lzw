@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
 
   const int MAXLEN = 1024;
   char buff[MAXLEN];
+  char *final = NULL;
 
   while(fgets(buff, MAXLEN, fptr) != NULL)
   {
@@ -39,7 +40,7 @@ int main(int argc, char *argv[])
     while (ebuff != buffSize)
     {
      // buff + 1 everytime there is something new
-     sbuff = buildCode(dictionnary, buff, sbuff, ebuff);
+     sbuff = buildCode(dictionnary, buff, sbuff, ebuff, buffSize, &final);
      ebuff = sbuff;
     }
   }
@@ -47,7 +48,7 @@ int main(int argc, char *argv[])
 }
 
 // return ebuff value so we can track where it is ending
-int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff) 
+int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff, int buffSize, char **final) 
 {
   // make the string
   int SIZE = ebuff - sbuff + 1;
@@ -72,10 +73,22 @@ int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff)
   {
     if (strcmp(str, dict[i].sequence) == 0)
     {
+      if (ebuff == buffSize)
+      {
+        int oldSize = strlen(*final);
+        int n = snprintf(NULL, 0, "%d", dict[i].code); // number of digits in the code
+
+        // use the current code and malloc or realloc size for final
+        allocFinal(*final, n + 1);
+
+        snprintf(*final + oldSize,n + 1, "%d", dict[i].code);
+        printf("%s\n", *final);
+      }
+
       found = true;
       ebuff++;
 
-      buildCode(dict, buff, sbuff, ebuff);
+      buildCode(dict, buff, sbuff, ebuff, buffSize, final);
     }
   }
 
@@ -88,11 +101,33 @@ int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff)
 
     strcpy(dict[dictLen].sequence, str);
     dict[dictLen].code = dictLen;
+
+    // malloc for final
+    int oldSize = strlen(*final);
+    int n = snprintf(NULL, 0, "%d", dict[dictLen].code); // number of digits in the code
+
+    // use the current code and malloc or realloc size for final
+    printf("alloc\n");
+    allocFinal(*final, n + 1);
+        
+    snprintf(*final + oldSize,n + 1, "%d", dict[dictLen].code);
+    printf("%s\n", *final);
+ 
   }
 
   free(str);
 
   return ebuff;
+}
+
+void allocFinal(char *final, int n)
+{
+  if (final == NULL)
+    final = malloc(sizeof(char) * n + 1);
+  else // realloc
+  {
+    final = realloc(final, n);
+  }
 }
 
 void initializeList(DictEntry dict[])
