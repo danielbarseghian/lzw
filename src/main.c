@@ -1,12 +1,11 @@
 #include "main.h"
-#include "stdio.h"
 #include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 DictEntry dictionnary[MAX_SIZE];
-int dictLen = 255;
+int dictLen = 256;
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +17,7 @@ int main(int argc, char *argv[])
 
   initializeList();
 
-  FILE *fptr = fopen(argv[1], "rb");
+  FILE *fptr = fopen(argv[1], "r");
   if (fptr == NULL)
   {
     printf("Coudnt open %s, please make sure that the name is correct\n", argv[1]);
@@ -26,81 +25,95 @@ int main(int argc, char *argv[])
   }
 
   int sbuff = 0, ebuff = 1;
-
   const int MAXLEN = 1024;
   char buff[MAXLEN];
   char *currCode = NULL;
 
   while(fgets(buff, MAXLEN, fptr) != NULL)
   {
-    printf("buff: %s\n", buff);
     int buffSize = strlen(buff);
 
-    // While buff didnt reach buffSize
-    while (ebuff != buffSize)
+    while (sbuff < buffSize && ebuff <= buffSize)
     {
-      // buff + 1 everytime there is something new
-      buildCodes(buff, sbuff, &ebuff, &currCode);
-     
-      sbuff = ebuff;
-      ebuff = sbuff + 1;
+      int res = buildCodes(buff, sbuff, &ebuff, &currCode);
+      
+      // if we reach the end 
+      if (res == 1 && ebuff == buffSize) 
+          break; 
+      
 
-      printf("now on %i\n", sbuff);
+      sbuff = ebuff - 1; 
+      ebuff = sbuff + 1;
     }
   }
-  printf("return\n");
+  
+  if (currCode != NULL) {
+      free(currCode);
+  }
+  fclose(fptr);
+  return 0;
 }
 
-// will return 1 or 0 depending on succed or not
 int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode)
 {
-   // calculate the size of the buff 
   int size = *ebuff - sbuff;
-
-  // allocate the memory
   char *s = malloc(sizeof(char) * size + 1);
 
-  // put the value between sbuff and ebuff in s 
   for (int i = sbuff, j = 0; i < *ebuff; i++, j++)
     s[j] = buff[i];
-
   s[size] = '\0';
 
-  printf("%s\n", s);
   bool found = false;
 
-  // find the code
   for (int i = 0; i < dictLen; i++)
   {
     if (strcmp(s, dictionnary[i].sequence) == 0)
     {
       found = true;
-
-      // get the number of digits in the code
+      
       int n = snprintf(NULL, 0, "%d", dictionnary[i].code);
-
-      // malloc the number of digits + 1 (for \0)
+     
+      if (*currCode != NULL)
+        free(*currCode);
+      
       *currCode = malloc(sizeof(char) * n + 1);
-
-      // copy the code
       snprintf(*currCode, n + 1 , "%d", dictionnary[i].code);
 
-      (*ebuff)++;
-      // try to find a new one
-      int result = buildCodes(buff, sbuff, ebuff, currCode);
-
-      if (result == 1)
-        return 1;
+      if (*ebuff < (int)strlen(buff)) {
+          (*ebuff)++;
+          int result = buildCodes(buff, sbuff, ebuff, currCode);
+          free(s);
+          return result;
+      }
+      break;
     }
   }
 
   if (!found)
   {
-    // use currCode
+    printf("%s, ", *currCode);
+    createNewCode(s);
+    free(s);
     return 0;
   }
-
+  
+  free(s);
   return 1;
+}
+
+void createNewCode(char *s)
+{
+  if (dictLen >= MAX_SIZE)
+    return;
+
+  dictionnary[dictLen].sequence = malloc(strlen(s) + 1);
+  if (dictionnary[dictLen].sequence == NULL)
+    return;
+
+  strcpy(dictionnary[dictLen].sequence, s);
+  dictionnary[dictLen].code = dictLen;
+  
+  dictLen++;
 }
 
 int allocFinal(char **final, int size)
@@ -115,19 +128,16 @@ int allocFinal(char **final, int size)
 
 void initializeList()
 {
-  // store each 256 values of one byte in the dictionnary
   for (int i = 0; i < INIT_SIZE; i++)
   {
-    dictionnary[i].sequence = malloc(sizeof dictionnary[i].sequence + 1);
+    dictionnary[i].sequence = malloc(2);
     if (dictionnary[i].sequence == NULL)
     {
       printf("malloc failed\n");
       return;
     }
-
     dictionnary[i].sequence[0] = (char) i;
     dictionnary[i].sequence[1] = '\0';
     dictionnary[i].code = i;
   }
 }
-

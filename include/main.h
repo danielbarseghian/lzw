@@ -13,5 +13,6 @@ typedef struct {
 void initializeList();
 int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode);
 int allocFinal(char **final, int size);
+void createNewCode(char *s);
 
 #endif
