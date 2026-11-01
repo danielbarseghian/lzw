@@ -133,6 +133,31 @@ int buildCode(DictEntry *dict, char *buff, int sbuff, int ebuff, int buffSize, c
   return ebuff;
 }
 
+// will return 1 or 0 depending on success or not
+int buildCodes(char *buff, int sbuff, ebuff, char **final)
+{
+   // calculate the size of the buff 
+  int size = ebuff - sbuff;
+
+  if (size == 0)
+    size = 1;
+
+  // allocate the memory
+  char *s = malloc(sizeof(char) * size + 1);
+
+  // put the value between sbuff and ebuff in s 
+  for (int i = sbuff, j = 0; i < ebuff; i++, i++) 
+    s[j] = buff[i];
+
+  // find the code
+  for (int i = 0; i < dictLen; i++)
+  {
+    
+  }
+
+  return 1;
+}
+
 int allocFinal(char **final, int size)
 {
   char *tmp = realloc(*final, size);
@@ -141,7 +166,6 @@ int allocFinal(char **final, int size)
 
   *final = tmp;
   return 1;
-}
 
 void initializeList(DictEntry dict[])
 {
