@@ -51,6 +51,8 @@ int main(int argc, char *argv[])
       free(currCode);
   }
   fclose(fptr);
+
+  printf("\n");
   return 0;
 }
 
@@ -96,6 +98,10 @@ int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode)
     free(s);
     return 0;
   }
+
+  // free the dictionnary
+  for (int i = 0; i < dictLen; i++)
+    free(dictionnary[dictLen].sequence);
   
   free(s);
   return 1;
