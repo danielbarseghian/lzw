@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 DictEntry dictionnary[MAX_SIZE];
 int dictLen = 256;
@@ -59,7 +60,7 @@ int main(int argc, char *argv[])
 int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode)
 {
   int size = *ebuff - sbuff;
-  char *s = malloc(sizeof(char) * size + 1);
+  uint8_t *s = 0x0; 
 
   for (int i = sbuff, j = 0; i < *ebuff; i++, j++)
     s[j] = buff[i];
@@ -69,7 +70,7 @@ int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode)
 
   for (int i = 0; i < dictLen; i++)
   {
-    if (strcmp(s, dictionnary[i].sequence) == 0)
+    if (s == dictionnary[i].sequence)
     {
       found = true;
       
@@ -99,10 +100,6 @@ int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode)
     return 0;
   }
 
-  // free the dictionnary
-  for (int i = 0; i < dictLen; i++)
-    free(dictionnary[dictLen].sequence);
-  
   free(s);
   return 1;
 }
@@ -136,14 +133,9 @@ void initializeList()
 {
   for (int i = 0; i < INIT_SIZE; i++)
   {
-    dictionnary[i].sequence = malloc(2);
-    if (dictionnary[i].sequence == NULL)
-    {
-      printf("malloc failed\n");
-      return;
-    }
-    dictionnary[i].sequence[0] = (char) i;
-    dictionnary[i].sequence[1] = '\0';
+    dictionnary[i].sequence = 0x0; 
+
+    dictionnary[i].sequence = (char) i;
     dictionnary[i].code = i;
   }
 }

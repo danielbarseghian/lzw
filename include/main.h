@@ -1,9 +1,10 @@
 #include <stdbool.h>
+#include <stdint.h>
 #ifndef MAIN_H
 #define MAIN_H
 
 typedef struct {
-  char *sequence;
+  char sequence;
   int code;
 } DictEntry;
 
@@ -13,6 +14,6 @@ typedef struct {
 void initializeList();
 int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode);
 int allocFinal(char **final, int size);
-void createNewCode(char *s);
+void createNewCode(char s);
 
 #endif
