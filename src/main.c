@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 DictEntry dictionnary[MAX_SIZE];
-int dictLen = 256;
+int dictLen = 0;
 
 int main(int argc, char *argv[])
 {
@@ -16,14 +16,16 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  initializeList();
-
-  FILE *fptr = fopen(argv[1], "r");
+  FILE *fptr = fopen(argv[1], "rb");
   if (fptr == NULL)
   {
     printf("Coudnt open %s, please make sure that the name is correct\n", argv[1]);
     return 1;
   }
+
+  uint16_t s = 0x0;
+
+  read16(fptr, &s);
 
   int sbuff = 0, ebuff = 1;
   const int MAXLEN = 1024;
@@ -32,6 +34,7 @@ int main(int argc, char *argv[])
 
   while(fgets(buff, MAXLEN, fptr) != NULL)
   {
+    // printf("%s\n", buff);
     int buffSize = strlen(buff);
 
     while (sbuff < buffSize && ebuff <= buffSize)
@@ -57,14 +60,24 @@ int main(int argc, char *argv[])
   return 0;
 }
 
+// returns 1 if it succeed or 0 if not
+int read16(FILE *f, uint16_t *s)
+{
+  // we can read the file byte by byte (8 by 8) then assemble them together to make 16 bits
+  int lower = fgetc(f);
+  int upper = fgetc(f);
+
+  if (lower == EOF || upper == EOF)
+    return 1;
+
+  printf("read: %u\n", (upper<<8) | lower);
+
+  return 1;
+}
 int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode)
 {
   int size = *ebuff - sbuff;
-  uint8_t *s = 0x0; 
-
-  for (int i = sbuff, j = 0; i < *ebuff; i++, j++)
-    s[j] = buff[i];
-  s[size] = '\0';
+  uint16_t *s = 0x0; 
 
   bool found = false;
 
@@ -92,28 +105,24 @@ int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode)
     }
   }
 
-  if (!found)
-  {
-    printf("%s, ", *currCode);
-    createNewCode(s);
-    free(s);
-    return 0;
-  }
+ // if (!found)
+  //{
+    // printf("%s, ", *currCode);
+    // createNewCode(s);
+  //  free(s);
+  return 0;
+ // }
 
   free(s);
   return 1;
 }
 
-void createNewCode(char *s)
+void createNewCode(uint16_t s)
 {
   if (dictLen >= MAX_SIZE)
     return;
 
-  dictionnary[dictLen].sequence = malloc(strlen(s) + 1);
-  if (dictionnary[dictLen].sequence == NULL)
-    return;
-
-  strcpy(dictionnary[dictLen].sequence, s);
+  dictionnary[dictLen].sequence = s; 
   dictionnary[dictLen].code = dictLen;
   
   dictLen++;
@@ -129,13 +138,3 @@ int allocFinal(char **final, int size)
   return 1;
 }
 
-void initializeList()
-{
-  for (int i = 0; i < INIT_SIZE; i++)
-  {
-    dictionnary[i].sequence = 0x0; 
-
-    dictionnary[i].sequence = (char) i;
-    dictionnary[i].code = i;
-  }
-}

@@ -2,7 +2,7 @@
 This is my first real terra project (since the first was two exercices i did in C)
 
 ## Description
-I made lzw compression in C (only works on text files) but it works! It compresses data into a dictionnary than with magic the file is much smaller
+I made a 16 bits lzw compression in C (only works on text files) but it works! It compresses data into a dictionnary than with magic the file is much smaller
 
 ## How to use
 The code is already pre-compiled for you! But if you want to modify the code yourself you should install dependecies!

@@ -1,7 +1,7 @@
-CC = x86_64-w64-mingw32-gcc 
+CC = cc 
 CFLAGS = -Wall -Wextra -std=c11 -Iinclude
 
-TARGET = lzw.exe
+TARGET = lzw
 SRC = src/main.c
 HEADER = include/main.h
 
