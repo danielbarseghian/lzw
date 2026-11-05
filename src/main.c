@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 
   while(read16(fptr, &s) != 0)
   {
-    buildCodes(s, &currCode);    
+    buildCodes(s, currCode);    
   }
 
   printf("%u\n", s);
@@ -56,9 +56,26 @@ int read16(FILE *f, uint16_t *s)
   return 0;
 }
 
-int buildCodes(uint16_t sequence, uint16_t *currCode)
+// return 1 if written or 0 if not
+int buildCodes(uint16_t sequence, uint16_t currCode)
 {
+  for (int i = 15; i != 0; i--)
+  {
+    uint16_t bits = (sequence >> i) & 0x07u;
 
+    for (int j = 0; j < dictLen; i++)
+    {
+      if (dictionnary[j].sequence == bits)
+      {
+        currCode = dictionnary[j].sequence;
+        
+        // try and find a new code
+        break;
+      }
+    }
+  }
+
+  printf("%u\n", currCode);
 }
 
 void initializeList()
