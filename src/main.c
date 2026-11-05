@@ -25,8 +25,12 @@ int main(int argc, char *argv[])
 
   uint16_t s = 0x0;
 
-  read16(fptr, &s);
+  while(read16(fptr, &s) != 0)
+  {
+    
+  }
 
+  printf("%u\n", s);
   int sbuff = 0, ebuff = 1;
   const int MAXLEN = 1024;
   char buff[MAXLEN];
@@ -67,23 +71,24 @@ int read16(FILE *f, uint16_t *s)
   int lower = fgetc(f);
   int upper = fgetc(f);
 
-  if (lower == EOF || upper == EOF)
+  if (lower == EOF)
     return 1;
 
-  printf("read: %u\n", (upper<<8) | lower);
+  if (upper == EOF)
+    upper = 0;
 
-  return 1;
+  *s = (upper<<8) | lower;
+
+  return 0;
 }
-int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode)
-{
-  int size = *ebuff - sbuff;
-  uint16_t *s = 0x0; 
 
+int buildCodes(uint16_t sequence)
+{
   bool found = false;
 
   for (int i = 0; i < dictLen; i++)
   {
-    if (s == dictionnary[i].sequence)
+    if (sequence == dictionnary[i].sequence)
     {
       found = true;
       
@@ -105,16 +110,30 @@ int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode)
     }
   }
 
- // if (!found)
-  //{
-    // printf("%s, ", *currCode);
-    // createNewCode(s);
-  //  free(s);
+  if (!found)
+  {
+    printf("%s, ", *currCode);
+    createNewCode(s);
   return 0;
- // }
+  }
 
-  free(s);
   return 1;
+}
+
+void initializeList()
+{
+  // initialize the sequences and codes
+  for (int i = 0; i < MAX_SIZE; i++)
+  {
+    dictionnary[i].code = 0;
+    dictionnary[i].sequence = 0x0;
+  }
+
+  while (dictLen < INIT_SIZE)
+  {
+    dictionnary[dictLen].sequence = (uint16_t)dictLen;
+    dictionnary[dictLen].code = dictLen;
+  }
 }
 
 void createNewCode(uint16_t s)

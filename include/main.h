@@ -10,10 +10,13 @@ typedef struct {
 } DictEntry;
 
 #define MAX_SIZE 4096
+#define INIT_SIZE 256
 
-int buildCodes(char *buff, int sbuff, int *ebuff, char **currCode);
+int buildCodes(uint16_t sequence);
 int allocFinal(char **final, int size);
 void createNewCode(uint16_t s);
 int read16(FILE *f, uint16_t *s);
+int count01(int x);
+void initializeDict();
 
 #endif
