@@ -1,5 +1,4 @@
 #include "main.h"
-#include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,18 +23,15 @@ int main(int argc, char *argv[])
   }
 
   uint16_t s = 0x0;
-  char *currCode = NULL;
+  uint16_t currCode = 0x0;
 
   while(read16(fptr, &s) != 0)
   {
-    buildCodes(s);    
+    buildCodes(s, &currCode);    
   }
 
   printf("%u\n", s);
  
-  if (currCode != NULL) {
-      free(currCode);
-  }
   fclose(fptr);
 
   printf("\n");
@@ -60,40 +56,9 @@ int read16(FILE *f, uint16_t *s)
   return 0;
 }
 
-int buildCodes(uint16_t sequence, char **currCode)
+int buildCodes(uint16_t sequence, uint16_t *currCode)
 {
-  bool found = false;
 
-  for (int i = 0; i < dictLen; i++)
-  {
-    if (sequence == dictionnary[i].sequence)
-    {
-      found = true;
-      
-      int n = snprintf(NULL, 0, "%d", dictionnary[i].code);
-     
-      if (*currCode != NULL)
-        free(*currCode);
-      
-      *currCode = malloc(sizeof(char) * n + 1);
-      snprintf(*currCode, n + 1 , "%d", dictionnary[i].code);
-
-      int result = buildCodes(buff, sbuff, ebuff, currCode);
-      return result;
-    }
-
-    break;
-  }
-}
-
-  if (!found)
-  {
-    printf("%s, ", *currCode);
-    createNewCode(s);
-  return 0;
-  }
-
-  return 1;
 }
 
 void initializeList()
