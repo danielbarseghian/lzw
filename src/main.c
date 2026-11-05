@@ -24,37 +24,15 @@ int main(int argc, char *argv[])
   }
 
   uint16_t s = 0x0;
+  char *currCode = NULL;
 
   while(read16(fptr, &s) != 0)
   {
-    
+    buildCodes(s);    
   }
 
   printf("%u\n", s);
-  int sbuff = 0, ebuff = 1;
-  const int MAXLEN = 1024;
-  char buff[MAXLEN];
-  char *currCode = NULL;
-
-  while(fgets(buff, MAXLEN, fptr) != NULL)
-  {
-    // printf("%s\n", buff);
-    int buffSize = strlen(buff);
-
-    while (sbuff < buffSize && ebuff <= buffSize)
-    {
-      int res = buildCodes(buff, sbuff, &ebuff, &currCode);
-      
-      // if we reach the end 
-      if (res == 1 && ebuff == buffSize) 
-          break; 
-      
-
-      sbuff = ebuff - 1; 
-      ebuff = sbuff + 1;
-    }
-  }
-  
+ 
   if (currCode != NULL) {
       free(currCode);
   }
@@ -82,7 +60,7 @@ int read16(FILE *f, uint16_t *s)
   return 0;
 }
 
-int buildCodes(uint16_t sequence)
+int buildCodes(uint16_t sequence, char **currCode)
 {
   bool found = false;
 
@@ -100,15 +78,13 @@ int buildCodes(uint16_t sequence)
       *currCode = malloc(sizeof(char) * n + 1);
       snprintf(*currCode, n + 1 , "%d", dictionnary[i].code);
 
-      if (*ebuff < (int)strlen(buff)) {
-          (*ebuff)++;
-          int result = buildCodes(buff, sbuff, ebuff, currCode);
-          free(s);
-          return result;
-      }
-      break;
+      int result = buildCodes(buff, sbuff, ebuff, currCode);
+      return result;
     }
+
+    break;
   }
+}
 
   if (!found)
   {
@@ -133,6 +109,7 @@ void initializeList()
   {
     dictionnary[dictLen].sequence = (uint16_t)dictLen;
     dictionnary[dictLen].code = dictLen;
+    dictLen++;
   }
 }
 
