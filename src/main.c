@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   uint16_t currCode = 0x0;
 
   while (read16(fptr, &s) != 0) {
-    buildCodes(s, currCode);
+    buildCodes(s, argv[2]);
   }
 
   printf("%u\n", s);
@@ -54,8 +54,10 @@ int read16(FILE *f, uint16_t *s) {
 }
 
 // return 1 if written or 0 if not
-int buildCodes(uint16_t sequence, uint16_t currCode) {
+int buildCodes(uint16_t sequence, char *outName)
+{
   bool newCode = false;
+  uint16_t currCode = 0x0;
 
   for (int i = 15; i != 0; i--) {
     newCode = true;
@@ -75,7 +77,8 @@ int buildCodes(uint16_t sequence, uint16_t currCode) {
     // if they didnt find a new code write currCode and put this new code
     if (newCode) {
       // write to file
-
+      writeFile(currCode, outName); 
+     
       // find new code
     }
   }
@@ -83,7 +86,19 @@ int buildCodes(uint16_t sequence, uint16_t currCode) {
   return 1;
 }
 
-int writeFile(uint16_t code) { return 1; }
+int writeFile(uint16_t code, char *outName) 
+{
+  FILE *fwrt = fopen(outName, "wb");
+  if (fwrt == NULL)
+  {
+    printf("cant open file %s to write\n", outName);
+    return 1;
+  }
+
+  fwrite(&code, sizeof(uint16_t), 1, fwrt);
+
+  return 0; 
+}
 
 void initializeList() {
   // initialize the sequences and codes
