@@ -3,12 +3,13 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 DictEntry dictionnary[MAX_SIZE];
 int dictLen = 0;
 
 int main(int argc, char *argv[]) {
-  if (argc != 2) {
+  if (argc != 3) {
     printf("please use --help\n");
     return 1;
   }
@@ -21,10 +22,16 @@ int main(int argc, char *argv[]) {
   }
 
   uint16_t s = 0x0;
-  uint16_t currCode = 0x0;
+  
+  FILE *fwrt = fopen(argv[2], "wb");
+  if (fwrt == NULL) {
+    printf("cant open file %s to write\n", argv[2]);
+    return 1;
+  }
 
-  while (read16(fptr, &s) != 0) {
-    buildCodes(s, argv[2]);
+
+  while (read16(fptr, &s) != 1) {
+    buildCodes(s, fwrt);
   }
 
   printf("%u\n", s);
@@ -54,20 +61,19 @@ int read16(FILE *f, uint16_t *s) {
 }
 
 // return 1 if written or 0 if not
-int buildCodes(uint16_t sequence, char *outName)
+int buildCodes(uint16_t sequence, FILE *fwrt)
 {
-  bool newCode = false;
-  uint16_t currCode = 0x0;
-
+  uint16_t currCode = 0x0, newSequence = 0x0; 
+  
   for (int i = 15; i != 0; i--) {
-    newCode = true;
     uint16_t bits = (sequence >> i) & 0x07u;
+    newSequence = bits;
 
-    for (int j = 0; j < dictLen; i++) {
+    for (int j = 0; j < dictLen; j++) {
       if (dictionnary[j].sequence == bits) {
-        newCode = false;
+        newSequence = 0x0;
 
-        currCode = dictionnary[j].sequence;
+        currCode = dictionnary[j].code;
 
         // try and find a new code
         break;
@@ -75,25 +81,30 @@ int buildCodes(uint16_t sequence, char *outName)
     }
 
     // if they didnt find a new code write currCode and put this new code
-    if (newCode) {
+    if (newSequence) {
       // write to file
-      writeFile(currCode, outName); 
+      writeFile(currCode, fwrt); 
      
-      // find new code
+      // create new code
+      createNewCode(newSequence);
     }
   }
 
   return 1;
 }
 
-int writeFile(uint16_t code, char *outName) 
+int createNewCode(uint16_t sequence)
 {
-  FILE *fwrt = fopen(outName, "wb");
-  if (fwrt == NULL)
-  {
-    printf("cant open file %s to write\n", outName);
-    return 1;
-  }
+  dictionnary[dictLen].sequence = sequence;
+  dictionnary[dictLen].code = dictLen;
+  dictLen++;
+
+  return 0;     
+}
+
+int writeFile(uint16_t code, FILE *fwrt)
+{
+  printf("write %" PRIu16 "\n", code); 
 
   fwrite(&code, sizeof(uint16_t), 1, fwrt);
 
@@ -112,16 +123,6 @@ void initializeList() {
     dictionnary[dictLen].code = dictLen;
     dictLen++;
   }
-}
-
-void createNewCode(uint16_t s) {
-  if (dictLen >= MAX_SIZE)
-    return;
-
-  dictionnary[dictLen].sequence = s;
-  dictionnary[dictLen].code = dictLen;
-
-  dictLen++;
 }
 
 int allocFinal(char **final, int size) {

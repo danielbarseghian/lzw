@@ -12,12 +12,12 @@ typedef struct {
 #define MAX_SIZE 4096
 #define INIT_SIZE 256
 
-int buildCodes(uint16_t sequence, char *outName);
+int buildCodes(uint16_t sequence, FILE *fwrt);
 int allocFinal(char **final, int size);
-void createNewCode(uint16_t s);
 int read16(FILE *f, uint16_t *s);
 int count01(int x);
 void initializeDict();
-int writeFile(uint16_t code, char *outName);
+int writeFile(uint16_t code, FILE *fwrt);
+int createNewCode(uint16_t sequence);
 
 #endif
