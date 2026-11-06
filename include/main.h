@@ -7,7 +7,7 @@
 typedef struct {
   uint16_t sequence;
   uint16_t code;
-} dictentry;
+} DictEntry;
 
 #define MAX_SIZE 4096
 #define INIT_SIZE 256
@@ -18,5 +18,6 @@ void createNewCode(uint16_t s);
 int read16(FILE *f, uint16_t *s);
 int count01(int x);
 void initializeDict();
+int writeFile(uint16_t code);
 
 #endif
