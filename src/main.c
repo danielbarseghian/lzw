@@ -37,46 +37,10 @@ int main(int argc, char *argv[]) {
   bool first = true;
 
   while (fread(&byte, 1, 1, fptr)) {
-    
-    int currBit = 1;
-  
-    if (first) {
-      firstBit = byte & 1;
-
-      first = false;
-    }
-
-    // and the byte after 
-    unsigned char nextBit = 0;
-
     // this is the code we are going to create
-    unsigned char sequence = 0;
+    unsigned char sequence[MAX_SIZE];
+    int sequenceIndex = 0;
 
-    uint16_t code = 0x0;
-    bool found = false;
-
-    for (int i = 0; i < dictLen; i++)
-    {
-      nextBit = byte & currBit + 1;
-      sequence = firstBit | (nextBit << 1);
- 
-      if (sequence == dictionnary[i].sequence)
-      {
-        found = true;
-
-        firstBit = sequence; 
-        code = dictionnary[i].code;
-
-        currBit++;
-      }
-    }
-
-    if (found)
-      printf("%" PRIu16 "; ", code);
-    
-    createNewCode(sequence);
-
-    firstBit = sequence;
   }
 
   fclose(fptr);

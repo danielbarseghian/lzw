@@ -2,8 +2,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #ifndef MAIN_H
-#define MAIN_H
 
+#define MAIN_H
 #define MAX_SIZE 4096
 #define INIT_SIZE 256
 
