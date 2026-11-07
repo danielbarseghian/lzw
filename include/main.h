@@ -8,7 +8,7 @@
 #define INIT_SIZE 256
 
 typedef struct {
-  unsigned char sequence[MAX_SIZE];
+  unsigned char sequence;
   uint16_t code;
 } DictEntry;
 

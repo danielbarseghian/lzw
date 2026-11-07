@@ -19,8 +19,7 @@ int main(int argc, char *argv[]) {
 
   FILE *fptr = fopen(argv[1], "rb");
   if (fptr == NULL) {
-    printf("Coudnt open %s, please make sure that the name is correct\n",
-           argv[1]);
+    printf("Coudnt open %s, please make sure that the name is correct\n", argv[1]);
     return 1;
   }
 
@@ -30,17 +29,19 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  // geeksforgeeks is one of the best websites i used so far
+  // geeksforgeeks is my goat 
   unsigned char byte;
-  unsigned char firstBit;
 
-  bool first = true;
+  // the max sequence size is 16 bits 
+  uint16_t sequence = 0x0;
 
   while (fread(&byte, 1, 1, fptr)) {
-    // this is the code we are going to create
-    unsigned char sequence[MAX_SIZE];
-    int sequenceIndex = 0;
-
+    for (int i = 7; i >= 0 ; i--) {
+      unsigned bit = (byte >> i) & 1u;
+      
+      sequence = (uint16_t)(sequence << 1 | bit);
+    }
+    printf("%" PRIu16 "\n", sequence);
   }
 
   fclose(fptr);
