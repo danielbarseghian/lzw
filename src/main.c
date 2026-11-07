@@ -21,8 +21,6 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  uint16_t s = 0x0;
-  
   FILE *fwrt = fopen(argv[2], "wb");
   if (fwrt == NULL) {
     printf("cant open file %s to write\n", argv[2]);
@@ -30,33 +28,15 @@ int main(int argc, char *argv[]) {
   }
 
 
-  while (read16(fptr, &s) != 1) {
-    buildCodes(s, fwrt);
-  }
+  unsigned char byte;
 
-  printf("%u\n", s);
+  while (fread(&byte, 1, 1, fptr)) {
+    buildCodes(byte, fwrt);
+  }
 
   fclose(fptr);
 
   printf("\n");
-  return 0;
-}
-
-// returns 1 if it succeed or 0 if not
-int read16(FILE *f, uint16_t *s) {
-  // we can read the file byte by byte (8 by 8) then assemble them together to
-  // make 16 bits
-  int lower = fgetc(f);
-  int upper = fgetc(f);
-
-  if (lower == EOF)
-    return 1;
-
-  if (upper == EOF)
-    upper = 0;
-
-  *s = (upper << 8) | lower;
-
   return 0;
 }
 
@@ -125,11 +105,3 @@ void initializeList() {
   }
 }
 
-int allocFinal(char **final, int size) {
-  char *tmp = realloc(*final, size);
-  if (tmp == NULL)
-    return 0;
-
-  *final = tmp;
-  return 1;
-}
