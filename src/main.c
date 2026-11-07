@@ -14,6 +14,9 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
+  // initialize the dict with the first 256 character
+  initializeDict();
+
   FILE *fptr = fopen(argv[1], "rb");
   if (fptr == NULL) {
     printf("Coudnt open %s, please make sure that the name is correct\n",
@@ -27,53 +30,62 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-
+  // geeksforgeeks is one of the best websites i used so far
   unsigned char byte;
+  unsigned char firstBit;
+
+  bool first = true;
 
   while (fread(&byte, 1, 1, fptr)) {
-    buildCodes(byte, fwrt);
+    
+    int currBit = 1;
+  
+    if (first) {
+      firstBit = byte & 1;
+
+      first = false;
+    }
+
+    // and the byte after 
+    unsigned char nextBit = byte & currBit + 1;
+
+    // this is the code we are going to create
+    unsigned char nextCode = 0;
+
+    uint16_t code = 0x0;
+    bool found = false;
+
+    for (int i = 0; i < dictLen; i++)
+    {
+      nextCode = firstBit | (nextBit << 1);
+
+      printf("Comparint %uc and %uc \n", dictionnary[i].sequence, nextBit);
+      if (nextCode == dictionnary[i].sequence)
+      {
+        found = true;
+
+        p = nextCode; 
+
+        code = dictionnary[i].code; 
+      }
+    }
+
+    if (found)
+      printf("code for %uc: %" PRIu16 ";\n", r, code);
+    
+    createNewCode(nextCode);
+
+    p = c;
   }
 
   fclose(fptr);
+  fclose(fwrt);
 
   printf("\n");
   return 0;
 }
 
-// return 1 if written or 0 if not
-int buildCodes(uint16_t sequence, FILE *fwrt)
-{
-  uint16_t currCode = 0x0, newSequence = 0x0; 
-  
-  for (int i = 15; i != 0; i--) {
-    uint16_t bits = (sequence >> i) & 0x07u;
-    newSequence = bits;
-
-    for (int j = 0; j < dictLen; j++) {
-      if (dictionnary[j].sequence == bits) {
-        newSequence = 0x0;
-
-        currCode = dictionnary[j].code;
-
-        // try and find a new code
-        break;
-      }
-    }
-
-    // if they didnt find a new code write currCode and put this new code
-    if (newSequence) {
-      // write to file
-      writeFile(currCode, fwrt); 
-     
-      // create new code
-      createNewCode(newSequence);
-    }
-  }
-
-  return 1;
-}
-
-int createNewCode(uint16_t sequence)
+int createNewCode(unsigned char sequence)
 {
   dictionnary[dictLen].sequence = sequence;
   dictionnary[dictLen].code = dictLen;
@@ -91,7 +103,7 @@ int writeFile(uint16_t code, FILE *fwrt)
   return 0; 
 }
 
-void initializeList() {
+void initializeDict() {
   // initialize the sequences and codes
   for (int i = 0; i < MAX_SIZE; i++) {
     dictionnary[i].code = 0;
@@ -99,7 +111,7 @@ void initializeList() {
   }
 
   while (dictLen < INIT_SIZE) {
-    dictionnary[dictLen].sequence = (uint16_t)dictLen;
+    dictionnary[dictLen].sequence = (unsigned char)dictLen;
     dictionnary[dictLen].code = dictLen;
     dictLen++;
   }
