@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 
   // initialize the dict with the first 256 character
   initializeDict();
-
+ 
   FILE *fptr = fopen(argv[1], "rb");
   if (fptr == NULL) {
     printf("Coudnt open %s, please make sure that the name is correct\n", argv[1]);
@@ -28,20 +28,45 @@ int main(int argc, char *argv[]) {
     printf("cant open file %s to write\n", argv[2]);
     return 1;
   }
+ 
+  uint16_t sequence = 0x0;
+  int currCode = 0;
+  bool found = false;
 
   // geeksforgeeks is my goat 
   unsigned char byte;
 
-  // the max sequence size is 16 bits 
-  uint16_t sequence = 0x0;
+   while (fread(&byte, 1, 1, fptr)) {
+    found = false;
 
-  while (fread(&byte, 1, 1, fptr)) {
     for (int i = 7; i >= 0 ; i--) {
+      printf("loop\n");
       unsigned bit = (byte >> i) & 1u;
       
       sequence = (uint16_t)(sequence << 1 | bit);
+
+      for (int j = 0; j < dictLen; j++) {
+        if (sequence == dictionnary[j].sequence) {
+          printf("code found\n"); 
+          currCode = dictionnary[j].code;
+          found = true;
+
+          // find a new code
+          break;
+        }
+      }
+
+      // There is already a code and it didn't find it this loop
+      if ((currCode != 0) && (found == false)) {
+        printf("%i; ", currCode);
+
+        // create new code
+        createNewCode(sequence);
+
+        sequence = 0x0;
+      }
+
     }
-    printf("%" PRIu16 "\n", sequence);
   }
 
   fclose(fptr);
@@ -51,7 +76,7 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-int createNewCode(unsigned char sequence)
+int createNewCode(uint16_t sequence)
 {
   dictionnary[dictLen].sequence = sequence;
   dictionnary[dictLen].code = dictLen;

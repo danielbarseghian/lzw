@@ -8,13 +8,13 @@
 #define INIT_SIZE 256
 
 typedef struct {
-  unsigned char sequence;
-  uint16_t code;
+  uint16_t sequence;
+  int code;
 } DictEntry;
 
 int buildCodes(unsigned char byte, FILE *fwrt);
 int writeFile(uint16_t code, FILE *fwrt);
-int createNewCode(unsigned char sequence);
+int createNewCode(uint16_t sequence);
 int read16(FILE *f, uint16_t *s);
 void initializeDict();
 
