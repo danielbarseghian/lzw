@@ -47,35 +47,36 @@ int main(int argc, char *argv[]) {
     }
 
     // and the byte after 
-    unsigned char nextBit = byte & currBit + 1;
+    unsigned char nextBit = 0;
 
     // this is the code we are going to create
-    unsigned char nextCode = 0;
+    unsigned char sequence = 0;
 
     uint16_t code = 0x0;
     bool found = false;
 
     for (int i = 0; i < dictLen; i++)
     {
-      nextCode = firstBit | (nextBit << 1);
-
-      printf("Comparint %uc and %uc \n", dictionnary[i].sequence, nextBit);
-      if (nextCode == dictionnary[i].sequence)
+      nextBit = byte & currBit + 1;
+      sequence = firstBit | (nextBit << 1);
+ 
+      if (sequence == dictionnary[i].sequence)
       {
         found = true;
 
-        p = nextCode; 
+        firstBit = sequence; 
+        code = dictionnary[i].code;
 
-        code = dictionnary[i].code; 
+        currBit++;
       }
     }
 
     if (found)
-      printf("code for %uc: %" PRIu16 ";\n", r, code);
+      printf("%" PRIu16 "; ", code);
     
-    createNewCode(nextCode);
+    createNewCode(sequence);
 
-    p = c;
+    firstBit = sequence;
   }
 
   fclose(fptr);

@@ -4,13 +4,13 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-typedef struct {
-  unsigned char sequence;
-  uint16_t code;
-} DictEntry;
-
 #define MAX_SIZE 4096
 #define INIT_SIZE 256
+
+typedef struct {
+  unsigned char sequence[MAX_SIZE];
+  uint16_t code;
+} DictEntry;
 
 int buildCodes(unsigned char byte, FILE *fwrt);
 int writeFile(uint16_t code, FILE *fwrt);
