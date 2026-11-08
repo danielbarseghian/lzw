@@ -43,6 +43,7 @@ int main(int argc, char *argv[]) {
 
     // if its in zha table
     for (int i = 0; i < dictLen; i++) { 
+      // WHERE DO I PUT THE foudn = false
       // compare each bits
       for (int j = 15; j >= 0; j--) {
         // idk if i need to do this but it makes me look way smarter so im going to keep this
