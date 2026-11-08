@@ -29,14 +29,31 @@ int main(int argc, char *argv[]) {
     return 1;
   }
  
-  uint16_t sequence = 0x0;
-  int currCode = 0;
-  bool found = false;
-
   // geeksforgeeks is my goat 
-  unsigned char byte;
+  uint16_t p = fread(&p, 1, 1, fptr);
+  uint8_t c;
 
-   fclose(fptr);
+  while (fread(&c, 1, 1, fptr)) {
+
+    for (int i = 7; i >= 0; i--) {
+      printf("%u", (p >> i) & 1u);
+    }
+
+    for (int j = 7; j >= 0; j--) {
+      printf("%u", (c >> j) & 1u);
+    }
+    printf("\n");
+
+    // if p + c is in the table
+    p = (uint16_t)(p << 8 | c);
+
+    for (int i = 15; i >= 0; i--) {
+      printf("%u", (p >> i) & 1u);
+    }
+    printf("\n");
+  }
+
+  fclose(fptr);
   fclose(fwrt);
 
   printf("\n");
