@@ -33,39 +33,47 @@ int main(int argc, char *argv[]) {
   uint16_t p = fread(&p, 1, 1, fptr);
   uint8_t c;
   uint16_t sequence = 0x0;
+  int currCode;
 
   while (fread(&c, 1, 1, fptr)) {
     // if p + c is in the table
     sequence = (uint16_t)(p << 8 | c);
 
-    for (int i = 15; i >= 0; i--) {
-      printf("%u", (p >> i) & 1u);
-    }
-    printf("\n");
-
     bool found = false;
 
     // if its in zha table
-    for (int i = 0; i < dictLen; i++) {
+    for (int i = 0; i < dictLen; i++) { 
       // compare each bits
       for (int j = 15; j >= 0; j--) {
         // idk if i need to do this but it makes me look way smarter so im going to keep this
         if (((sequence >> j) & 1u) == ((dictionnary[i].sequence >> j) & 1u)) {
           p = sequence;
           found = true;
+          currCode = dictionnary[i].code;
         }
       }
     }
 
     if (!found) {
-
+      for (int i = 15; i >= 0; i--) {
+        printf("la la %i; ", currCode);
+      }
+      printf("\n");
     }
+
+    createNewCode(sequence);
+
+    p = c;
   }
+     
+  for (int i = 15; i >= 0; i--) { 
+    printf("po po %i; ", currCode);
+  }
+  printf("\n");
 
   fclose(fptr);
   fclose(fwrt);
 
-  printf("\n");
   return 0;
 }
 
