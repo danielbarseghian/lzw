@@ -29,47 +29,14 @@ int main(int argc, char *argv[]) {
     return 1;
   }
  
-  char sequence[17];
+  uint16_t sequence = 0x0;
   int currCode = 0;
   bool found = false;
 
   // geeksforgeeks is my goat 
   unsigned char byte;
 
-  while (fread(&byte, 1, 1, fptr)) {
-
-    for (int i = 7; i >= 0 ; i--) {
-      unsigned bit = (byte >> i) & 1u;
-
-      found = false;
-      
-      sequence = (byte >> i) & 1u;
-
-      for (int j = 0; j < dictLen; j++) {
-        if (sequence == dictionnary[j].sequence) {
-          currCode = dictionnary[j].code;
-          found = true;
-  
-          // find a new code
-          break;
-        }
-      }
-
-      // There is already a code and it didn't find it this loop
-      if ((currCode != 0) && (!found)) {
-        // printf("%i; ", currCode);
-
-        // create new code
-        createNewCode(sequence);
-
-        sequence = 0x0;
-        currCode = 0;
-      }
-
-    }
-  }
-
-  fclose(fptr);
+   fclose(fptr);
   fclose(fwrt);
 
   printf("\n");
