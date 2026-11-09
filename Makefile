@@ -1,4 +1,4 @@
-CC = cc 
+CC = cc
 CFLAGS = -Wall -Wextra -std=c11 -Iinclude
 
 TARGET = lzw
